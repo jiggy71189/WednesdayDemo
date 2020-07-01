@@ -10,14 +10,13 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.wednesday.demo</groupId>
-	<artifactId>WednesdayDemo-1</artifactId>
+	<artifactId>WednesdayDemo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>WednesdayDemo-1</name>
+	<name>WednesdayDemo</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
 		<java.version>1.8</java.version>
-		<!-- <jdbcUrl>jdbc:mysql://${db.ip}:${db.port}/${db.schema}?useSSL=true&amp;serverTimezone=UTC</jdbcUrl> -->
 	</properties>
 
 	<dependencies>
@@ -71,31 +70,11 @@
 			</exclusions>
 		</dependency>
 
-		<!-- Swagger -->
-		<!-- http://localhost:8080/swagger-ui.html -->
 		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger2</artifactId>
-			<version>2.9.2</version>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+			<version>6.0.4</version>
 		</dependency>
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger-ui</artifactId>
-			<version>2.9.2</version>
-		</dependency>
-<!-- Swagger -->
-		<!-- http://localhost:8080/swagger-ui.html -->
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger2</artifactId>
-			<version>2.9.2</version>
-		</dependency>
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger-ui</artifactId>
-			<version>2.9.2</version>
-		</dependency>
-
 	</dependencies>
 
 	<build>
@@ -105,43 +84,6 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 
-			<plugin>
-				<groupId>org.flywaydb</groupId>
-				<artifactId>flyway-maven-plugin</artifactId>
-				<version>6.4.0</version>
-				<configuration>
-					<initSql>SET default_storage_engine=InnoDB;</initSql>
-					<!-- we need this because of extensions. they have a higher version 
-						number namespace reserved (e.g. 8.x.x). new migrations in core version should 
-						be executed in the extended version as well -->
-					<outOfOrder>true</outOfOrder>
-
-					<!-- Because maven produces this warning after upgrading from 4.2.0 
-						to 5.1.0: [WARNING] Could not find schema history table `testdb`.`flyway_schema_history`, 
-						but found `testdb`.`schema_version` instead. You are seeing this message 
-						because Flyway changed its default for flyway.table in version 5.0.0 to flyway_schema_history 
-						and you are still relying on the old default (schema_version). Set flyway.table=schema_version 
-						in your configuration to fix this. This fallback mechanism will be removed 
-						in Flyway 6.0.0. -->
-					<table>schema_version</table>
-
-					<cleanDisabled>true</cleanDisabled>
-<!-- 					<driver>com.mysql.cj.jdbc.Driver</driver> -->
-					<driver>com.mysql.jdbc.Driver</driver>
-<!-- 					<url>${spring.datasource.url}</url> -->
-<!-- 					<user>${spring.datasource.username}</user> -->
-<!-- 					<password>${spring.datasource.password}</password> -->
-<url>jdbc:mysql://localhost:3307/logintest?allowPublicKeyRetrieval=true</url>
-<user>root</user>
-<password>steve</password>
-					<schemas>
-						<schema>${db.schema}</schema>
-					</schemas>
-					<locations>
-						<location>filesystem:src/main/resources/db/migration</location>
-					</locations>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 

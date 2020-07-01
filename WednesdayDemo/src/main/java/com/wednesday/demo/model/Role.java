@@ -2,8 +2,16 @@ package com.wednesday.demo.model;
 
 import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 
+/**
+ * @author Jignesh.Rathod
+ */
 @Entity
 @Table(name = "role")
 public class Role {

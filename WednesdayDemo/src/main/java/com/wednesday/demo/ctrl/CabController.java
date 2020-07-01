@@ -17,16 +17,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wednesday.demo.dao.CabRepository;
-import com.wednesday.demo.dao.UserCabBookingRepository;
+import com.wednesday.demo.dto.TransactionInfo;
 import com.wednesday.demo.dto.UserPrincipal;
 import com.wednesday.demo.model.Cab;
 import com.wednesday.demo.model.User;
 import com.wednesday.demo.model.UserCabBooking;
+import com.wednesday.demo.repository.CabRepository;
+import com.wednesday.demo.repository.UserCabBookingRepository;
 import com.wednesday.demo.utils.GeneralUtils;
 
+/**
+ * @author Jignesh.Rathod
+ */
 @RestController
-@RequestMapping(value = "${app.base-path}")
+@RequestMapping(value = "${app.base-path}" + "/cab")
 public class CabController {
 
 	@Autowired
@@ -36,70 +40,66 @@ public class CabController {
 	CabRepository cabRepository;
 
 	@Secured("ROLE_ADMIN")
-	@PostMapping("/api/add/cab")
+	@PostMapping("/add")
 	private ResponseEntity<Object> addCabDetail(@Valid @RequestBody Cab cabDetail) {
+		try {
 
-		cabRepository.save(cabDetail);
+			cabRepository.save(cabDetail);
 
-		return new ResponseEntity<>(true, HttpStatus.OK);
+			return new ResponseEntity<>(new TransactionInfo(true), HttpStatus.CREATED);
+		} catch (Exception e) {
+			TransactionInfo transInfo = new TransactionInfo(false);
+			transInfo.addErrorList(e.getCause().getMessage());
+			return new ResponseEntity<>(transInfo, HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	@Secured("ROLE_USER")
-	@GetMapping("/api/cab/{latitude}/{longitude}")
+	@GetMapping("/{latitude}/{longitude}")
 	private ResponseEntity<Object> getNearbyCablist(@PathVariable Double latitude, @PathVariable Double longitude) {
-
-		List<Cab> list = cabRepository.findAll();
-		List<Cab> nearby = new ArrayList<>();
-		Double dist = null;
-		for (int i = 0; i < list.size(); i++) {
-			dist = GeneralUtils.distance(latitude, longitude, list.get(i).getCurrentLatitude(),
-					list.get(i).getCurrentLongitude(), "k");
-			if (dist < 2.0d) {
-				nearby.add(list.get(i));
+		try {
+			List<Cab> list = cabRepository.findAll();
+			List<Cab> nearby = new ArrayList<>();
+			Double dist = null;
+			for (int i = 0; i < list.size(); i++) {
+				dist = GeneralUtils.distance(latitude, longitude, list.get(i).getCurrentLatitude(),
+						list.get(i).getCurrentLongitude(), "k");
+				if (dist < 2.0d) {
+					nearby.add(list.get(i));
+				}
 			}
-		}
 
-		return new ResponseEntity<>(nearby, HttpStatus.OK);
+			return new ResponseEntity<>(new TransactionInfo(nearby), HttpStatus.OK);
+		} catch (Exception e) {
+			TransactionInfo transInfo = new TransactionInfo(false);
+			transInfo.addErrorList(e.getCause().getMessage());
+			return new ResponseEntity<>(transInfo, HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	@Secured("ROLE_USER")
-	@GetMapping("/api/user/history")
-	private ResponseEntity<Object> getUserBookHistrory(@PathVariable Double latitude, @PathVariable Double longitude) {
-
-		UserPrincipal usrPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication()
-				.getPrincipal();
-
-		Long userid = usrPrincipal.getUserid();
-
-		List<UserCabBooking> list = UserCabBookingRepo.findAll();
-		List<UserCabBooking> userHistory = new ArrayList<>();
-		Double dist = null;
-		for (int i = 0; i < list.size(); i++) {
-			if (list.get(i).getUser().getId() == userid) {
-				userHistory.add(list.get(i));
-			}
-		}
-
-		return new ResponseEntity<>(userHistory, HttpStatus.OK);
-	}
-
-	@Secured("ROLE_USER")
-	@PostMapping("/api/add/booking")
+	@PostMapping("/add/booking")
 	private ResponseEntity<Object> addCabBooking(@Valid @RequestBody UserCabBooking bookingDetails) {
+		try {
+			UserPrincipal usrPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication()
+					.getPrincipal();
 
-		UserPrincipal usrPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication()
-				.getPrincipal();
+			Long userid = usrPrincipal.getUserid();
+			bookingDetails.setUser(new User(userid));
 
-		Long userid = usrPrincipal.getUserid();
-		bookingDetails.setUser(new User(userid));
+			Double distance = GeneralUtils.distance(bookingDetails.getSourceLatitude(),
+					bookingDetails.getSourceLongitude(), bookingDetails.getDestLatitude(),
+					bookingDetails.getDestLongitude(), "k");
 
-		Double distance = GeneralUtils.distance(bookingDetails.getSourceLatitude(), bookingDetails.getSourceLongitude(),
-				bookingDetails.getDestLatitude(), bookingDetails.getDestLongitude(), "k");
+			bookingDetails.setDistance(distance);
+			UserCabBooking obj = UserCabBookingRepo.save(bookingDetails);
 
-		bookingDetails.setDistance(distance);
-		UserCabBooking obj = UserCabBookingRepo.save(bookingDetails);
+			return new ResponseEntity<>(new TransactionInfo(obj), HttpStatus.CREATED);
+		} catch (Exception e) {
+			TransactionInfo transInfo = new TransactionInfo(false);
+			transInfo.addErrorList(e.getCause().getMessage());
+			return new ResponseEntity<>(transInfo, HttpStatus.BAD_REQUEST);
+		}
 
-		return new ResponseEntity<>(obj, HttpStatus.OK);
 	}
-
 }

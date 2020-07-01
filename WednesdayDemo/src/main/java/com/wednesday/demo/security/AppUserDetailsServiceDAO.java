@@ -9,12 +9,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import com.wednesday.demo.dao.UserRepository;
 import com.wednesday.demo.dto.UserPrincipal;
 import com.wednesday.demo.model.Role;
 import com.wednesday.demo.model.User;
+import com.wednesday.demo.repository.UserRepository;
 
-
+/**
+ * @author Jignesh.Rathod
+ */
 public class AppUserDetailsServiceDAO implements UserDetailsService {
 
 	@Autowired

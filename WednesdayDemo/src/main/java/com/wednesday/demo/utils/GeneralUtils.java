@@ -1,5 +1,8 @@
 package com.wednesday.demo.utils;
 
+/**
+ * @author Jignesh.Rathod
+ */
 public class GeneralUtils {
 
 	

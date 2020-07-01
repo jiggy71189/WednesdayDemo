@@ -1,7 +1,4 @@
-/**
- * Copyright (c) 2018, System Level Solutions (India) Pvt. Ltd.
- * 
- */
+
 package com.wednesday.demo.dto;
 
 import java.util.List;
@@ -9,6 +6,9 @@ import java.util.List;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+/**
+ * @author Jignesh.Rathod
+ */
 
 public class UserPrincipal implements UserDetails {
 

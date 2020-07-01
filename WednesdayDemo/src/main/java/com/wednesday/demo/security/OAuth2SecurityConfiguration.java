@@ -35,9 +35,11 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 
+/**
+ * @author Jignesh.Rathod
+ */
 @Configuration
 @EnableWebSecurity 
 public class OAuth2SecurityConfiguration { 
@@ -48,18 +50,9 @@ public class OAuth2SecurityConfiguration {
 	@Autowired
 	private PasswordEncoder passwordEncoderVal;
 
-	/**
-	 * @param auth Description param
-	 * @throws Exception Description
-	 */
 	@Autowired
 	public void globalUserDetails(final AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsServiceBean()).passwordEncoder(passwordEncoderVal);
-	}
-
-	@Bean
-	public CustomLogoutHandler customLogoutHandler() {
-		return new CustomLogoutHandler();
 	}
 
 	@Bean
@@ -123,13 +116,11 @@ public class OAuth2SecurityConfiguration {
 		@Override
 		public void configure(final WebSecurity web) throws Exception {
 			// web.ignoring().antMatchers("/nebulae/api/swagger.json");
-			web.ignoring().antMatchers(appBasePath + "/api/add/admin");
-			
 		}
 
 		@Override
 		protected void configure(final HttpSecurity http) throws Exception {
-			http.anonymous().disable().requestMatchers().antMatchers(appBasePath + "/api/**").and().authorizeRequests()
+			http.anonymous().disable().requestMatchers().antMatchers(appBasePath + "/**").and().authorizeRequests()
 					.anyRequest().authenticated().and().exceptionHandling()
 					.accessDeniedHandler(new OAuth2AccessDeniedHandler());
 		}
@@ -161,9 +152,9 @@ public class OAuth2SecurityConfiguration {
 		@Override
 		protected void configure(final HttpSecurity http) throws Exception {
 
-			http.authorizeRequests().antMatchers(appBasePath + "/api/add/user")
+			http.authorizeRequests().antMatchers(appBasePath)
 			.access("hasRole('ROLE_ADMIN')").and().exceptionHandling()
-					.accessDeniedHandler(getAccessDeniedHandler()).and().exceptionHandling();
+					.and().exceptionHandling();
 		}
 
 		@Bean
@@ -178,16 +169,6 @@ public class OAuth2SecurityConfiguration {
 
 	}
 
-	/**
-	 * 
-	 * @return Description
-	 */
-	public static AccessDeniedHandler getAccessDeniedHandler() {
-		return new MyAccessDeniedHandler();
-	}
 
-	public static AuthenticationFailureHandler customAuthenticationFailureHandler() {
-		return new CustomAuthenticationFailureHandler();
-	}
 
 }

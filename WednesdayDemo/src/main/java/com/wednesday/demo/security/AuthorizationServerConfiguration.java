@@ -16,7 +16,9 @@ import org.springframework.security.oauth2.provider.approval.UserApprovalHandler
 import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
-
+/**
+ * @author Jignesh.Rathod
+ */
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
@@ -42,11 +44,11 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 	@Override
 	public void configure(final ClientDetailsServiceConfigurer clients) throws Exception {
 
-		 clients.inMemory().withClient("nebulink").authorizedGrantTypes("password",
+		 clients.inMemory().withClient("wednesday").authorizedGrantTypes("password",
 		 "refresh_token")
 		 .authorities("ROLE_CLIENT", "ROLE_TRUSTED_CLIENT").scopes("read", "write",
 		 "trust")
-		 .secret(passwordEncoder.encode("nebul!nkFoT@")).accessTokenValiditySeconds(3600).
+		 .secret(passwordEncoder.encode("wedne$D@y")).accessTokenValiditySeconds(3600).
 		 refreshTokenValiditySeconds(86400);
 	}
 
