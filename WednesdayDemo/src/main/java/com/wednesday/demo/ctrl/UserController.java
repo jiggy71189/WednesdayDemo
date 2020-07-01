@@ -68,7 +68,7 @@ public class UserController {
 
 	@Secured("ROLE_USER")
 	@GetMapping("/book/history")
-	private ResponseEntity<Object> getUserBookHistrory(@PathVariable Double latitude, @PathVariable Double longitude) {
+	private ResponseEntity<Object> getUserBookHistrory() {
 
 		try {
 			UserPrincipal usrPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication()

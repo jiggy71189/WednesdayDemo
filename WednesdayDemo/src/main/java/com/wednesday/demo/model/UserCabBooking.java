@@ -7,6 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * @author Jignesh.Rathod
  */
@@ -25,6 +27,7 @@ public class UserCabBooking {
 	private Double distance;
 	private Double fare;
 
+	@JsonIgnore
 	@ManyToOne
 	private User user;
 	
